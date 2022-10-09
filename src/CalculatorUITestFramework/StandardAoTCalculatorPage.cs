@@ -6,8 +6,11 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using OpenQA.Selenium.Interactions;
-
+using System;
+using System.ComponentModel;
+using System.Diagnostics.Metrics;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace CalculatorUITestFramework
 {
@@ -32,7 +35,12 @@ namespace CalculatorUITestFramework
             string source = this.session.PageSource;
             if (source.Contains("ExitAlwaysOnTopButton"))
             {
-                this.ExitAlwaysOnTopButton.Click();
+                while(source.Contains("ExitAlwaysOnTopButton"))
+                {
+                    Console.WriteLine("click");
+                    this.ExitAlwaysOnTopButton.Click();
+                    source = this.session.PageSource;
+                }
                 Assert.AreEqual("Standard", CalculatorApp.GetCalculatorHeaderText());
             }
             else
@@ -54,6 +62,7 @@ namespace CalculatorUITestFramework
         ///// </summary>
         public void NavigateToStandardAoTMode()
         {
+            Console.WriteLine("inside NavigateToAoTMode method");
             string source = this.session.PageSource;
             if (source.Contains("NormalAlwaysOnTopButton"))
             {
@@ -82,7 +91,8 @@ namespace CalculatorUITestFramework
                     moveToAoTButton.Perform();
                 }
                 else
-                {
+                {  
+                    Task.Delay(75).Wait();
                     Actions moveToBackToFullViewVButton = new Actions(CalculatorDriver.Instance.CalculatorSession);
                     moveToBackToFullViewVButton.MoveToElement(ExitAlwaysOnTopButton);
                     moveToBackToFullViewVButton.Perform();
